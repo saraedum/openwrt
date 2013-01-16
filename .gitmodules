@@ -1,0 +1,6 @@
+[submodule "git-feeds/luci"]
+	path = git-feeds/luci
+	url = git://github.com/ffulm/luci-packages.git
+[submodule "git-feeds/openwrt"]
+	path = git-feeds/openwrt
+	url = git://github.com/ffulm/openwrt-packages.git
