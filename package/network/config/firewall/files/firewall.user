@@ -2,3 +2,5 @@
 # Put your custom iptables rules here, they will
 # be executed with each firewall (re-)start.
 
+iptables-restore < /etc/firewall4.user
+ip6tables-restore < /etc/firewall6.user
