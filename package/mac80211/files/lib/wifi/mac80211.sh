@@ -598,6 +598,13 @@ config wifi-iface
 	option ssid     ulm.freifunk.net
 	option encryption none
 
+config wifi-iface
+	option device	radio$devidx
+	option mode		adhoc
+	option ssid		batman.ulm.freifunk.net
+	option encryption	none
+	option bssid	CA:FF:EE:CA:FF:EE
+
 EOF
 	devidx=$(($devidx + 1))
 	done
