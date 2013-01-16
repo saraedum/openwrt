@@ -47,6 +47,9 @@ COMMIT
 -A INPUT -p udp --dport bootps -j ACCEPT
 -A INPUT -p udp --dport domain -j ACCEPT
 
+# allow luci splash
+-A INPUT -p tcp --dport 8082 -j ACCEPT
+
 ######################
 # filter --- FORWARD #
 ######################
