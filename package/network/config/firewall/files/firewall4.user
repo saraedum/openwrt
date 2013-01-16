@@ -1,3 +1,7 @@
+############################################################################
+# additional rules are set in /etc/init.d/siit and /etc/init.d/luci_splash #
+############################################################################
+
 *nat
 :PREROUTING ACCEPT [0:0]
 :INPUT ACCEPT [0:0]
@@ -12,7 +16,20 @@ COMMIT
 COMMIT
 
 *mangle
+#########################
+# mangle --- PREROUTING #
+#########################
 :PREROUTING ACCEPT [0:0]
+
+# restore mark if this packet belongs to a connection which we already marked
+-A PREROUTING -j CONNMARK --restore-mark
+
+# mark packets which need to go to siit if they are bound for the v4 internet
+-A PREROUTING -i br-lan -j MARK --set-xmark 0x1
+
+# save the mark for future packets of the same connection
+-A PREROUTING -j CONNMARK --save-mark
+
 :INPUT ACCEPT [0:0]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
@@ -25,6 +42,9 @@ COMMIT
 ####################
 :INPUT DROP [0:0]
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
+
+# no v4 packet may enter through batman
+-A INPUT -m physdev --physdev-in bat0 -j DROP
 
 -A INPUT -i lo -j ACCEPT 
 
@@ -54,12 +74,33 @@ COMMIT
 # filter --- FORWARD #
 ######################
 :FORWARD DROP [0:0]
+# to work around MTU problems, related to using tinc and batman, we need to clamp the mss - not sure if this is really what we want
+-A FORWARD -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1200:1536 -j TCPMSS --set-mss 1200
+
 -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
+
+# no v4 packet may leave through batman
+-A FORWARD -m physdev --physdev-is-bridged --physdev-out bat0 -j DROP
+
+# do not route any freifunk traffic directly to the internet
+-A FORWARD -o eth0.2 -m mark --mark 0x1 -j REJECT --reject-with icmp-port-unreachable
+
+# forward packets bound for the v4 internet
+-A FORWARD -o siit0 -j ACCEPT
 
 #####################
 # filter --- OUTPUT #
 #####################
 :OUTPUT ACCEPT [0:0]
 -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
+
+# we don't let tinc packets go through batman (allowing this would probably
+# result in tinc packets being wrapped in batman packets being wrapped in tinc
+# packets and so on)
+-A OUTPUT -p tcp -o siit0 -m tcp --dport tinc -j REJECT --reject-with icmp-net-prohibited
+-A OUTPUT -p udp -o siit0 -m udp --dport tinc -j REJECT --reject-with icmp-net-prohibited
+
+# no v4 packet may leave through batman - TODO: this does not work
+# -A OUTPUT -m physdev --physdev-out bat0 -j DROP
 
 COMMIT

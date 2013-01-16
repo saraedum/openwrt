@@ -1,10 +1,27 @@
+############################################################################
+# additional rules are set in /etc/init.d/siit and /etc/init.d/luci_splash #
+############################################################################
+
 *raw
 :PREROUTING ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 COMMIT
 
 *mangle
+#########################
+# mangle --- PREROUTING #
+#########################
 :PREROUTING ACCEPT [0:0]
+
+# restore mark if this packet belongs to a connection which we already marked
+-A PREROUTING -j CONNMARK --restore-mark
+
+# mark packets which need to go to siit if they are bound for the v4 internet
+-A PREROUTING -i br-lan -j MARK --set-xmark 0x1
+
+# save the mark for future packets of the same connection
+-A PREROUTING -j CONNMARK --save-mark
+
 :INPUT ACCEPT [0:0]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
@@ -38,10 +55,29 @@ COMMIT
 :FORWARD ACCEPT [0:0]
 -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
 
+# no private v4 packet may leave through batman
+-A FORWARD -m physdev --physdev-is-bridged --physdev-out bat0 -d ::ffff:192.168.0.0/112 -j REJECT --reject-with icmp6-port-unreachable
+-A FORWARD -m physdev --physdev-is-bridged --physdev-out bat0 -d ::ffff:172.16.0.0/108 -j REJECT --reject-with icmp6-port-unreachable
+-A FORWARD -m physdev --physdev-is-bridged --physdev-out bat0 -d ::ffff:10.0.0.0/104 -j REJECT --reject-with icmp6-port-unreachable
+
+# do not route any freifunk traffic directly to the internet
+-A FORWARD -o eth0.2 -m mark --mark 0x1 -j REJECT
+
 #####################
 # filter --- OUTPUT #
 #####################
 :OUTPUT ACCEPT [0:0]
 -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
+
+# we don't let tinc packets go through batman (allowing this would probably
+# result in tinc packets being wrapped in batman packets being wrapped in tinc
+# packets and so on)
+-A OUTPUT -p tcp -o br-lan -m tcp --dport tinc -j REJECT
+-A OUTPUT -p udp -o br-lan -m udp --dport tinc -j REJECT
+
+# no private v4 packet may leave through batman - TODO: this does not work
+#-A OUTPUT -m physdev --physdev-out bat0 -d ::ffff:192.168.0.0/112 -j REJECT --reject-with icmp6-port-unreachable
+#-A OUTPUT -m physdev --physdev-out bat0 -d ::ffff:172.16.0.0/108 -j REJECT --reject-with icmp6-port-unreachable
+#-A OUTPUT -m physdev --physdev-out bat0 -d ::ffff:10.0.0.0/104 -j REJECT --reject-with icmp6-port-unreachable
 
 COMMIT
