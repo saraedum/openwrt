@@ -587,7 +587,7 @@ detect_mac80211() {
 config wifi-device  radio$devidx
 	option type     mac80211
 	option channel  ${channel}
-	option hwmode	11${mode_11n}${mode_band}
+	option hwmode	11${mode_band}
 $dev_id
 $ht_capab
 	# REMOVE THIS LINE TO ENABLE WIFI:
