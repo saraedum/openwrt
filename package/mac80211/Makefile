@@ -92,7 +92,7 @@ define KernelPackage/mac80211/config
 
 	config PACKAGE_MAC80211_MESH
 		bool "Enable 802.11s mesh support"
-		default y
+		default n
 
   endif
 endef
