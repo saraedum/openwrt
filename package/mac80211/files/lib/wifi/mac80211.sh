@@ -552,7 +552,7 @@ detect_mac80211() {
 
 		mode_11n=""
 		mode_band="g"
-		channel="11"
+		channel="1"
 		ht_cap=0
 		for cap in $(iw phy "$dev" info | grep 'Capabilities:' | cut -d: -f2); do
 			ht_cap="$(($ht_cap | $cap))"
