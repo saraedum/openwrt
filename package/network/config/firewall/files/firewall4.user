@@ -1,0 +1,56 @@
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+
+COMMIT
+
+*raw
+:PREROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+COMMIT
+
+*mangle
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+COMMIT
+
+*filter
+####################
+# filter --- INPUT #
+####################
+:INPUT DROP [0:0]
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
+
+-A INPUT -i lo -j ACCEPT 
+
+# syn flood protection copied from openwrt firewall
+:syn_flood - [0:0]
+-A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j syn_flood 
+-A syn_flood -m limit --limit 25/sec --limit-burst 50 -j RETURN 
+-A syn_flood -j DROP 
+
+# allow all kinds of icmp
+-A INPUT -p icmp -j ACCEPT
+
+# allow telnet, ssh
+-A INPUT -p tcp -m tcp --dport telnet -j ACCEPT 
+-A INPUT -p tcp -m tcp --dport ssh -j ACCEPT 
+
+######################
+# filter --- FORWARD #
+######################
+:FORWARD DROP [0:0]
+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
+
+#####################
+# filter --- OUTPUT #
+#####################
+:OUTPUT ACCEPT [0:0]
+-A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 
+
+COMMIT
