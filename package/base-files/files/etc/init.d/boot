@@ -83,6 +83,7 @@ start() {
 	rm -f /tmp/wireless.tmp
 
 	apply_uci_config
+	apply_ffulm_replacements_inplace /etc/config/network
 	config_load system
 	config_foreach system_config system
 
