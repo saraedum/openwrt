@@ -45,12 +45,10 @@ define Package/firewall/install
 	$(INSTALL_DATA) ./files/firewall.config $(1)/etc/config/firewall
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) ./files/firewall.init $(1)/etc/init.d/firewall
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
-	$(INSTALL_DATA) ./files/firewall.hotplug $(1)/etc/hotplug.d/iface/20-firewall
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/firewall
-	$(INSTALL_DATA) ./files/reflection.hotplug $(1)/etc/hotplug.d/firewall/10-nat-reflection
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DATA) ./files/firewall.user $(1)/etc
+	$(INSTALL_DATA) ./files/firewall4.user $(1)/etc
+	$(INSTALL_DATA) ./files/firewall6.user $(1)/etc
 	$(INSTALL_DIR) $(1)/lib/upgrade/keep.d
 	$(INSTALL_DATA) ./files/firewall.upgrade $(1)/lib/upgrade/keep.d/firewall
 endef

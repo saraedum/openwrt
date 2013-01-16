@@ -552,7 +552,7 @@ detect_mac80211() {
 
 		mode_11n=""
 		mode_band="g"
-		channel="11"
+		channel="1"
 		ht_cap=0
 		for cap in $(iw phy "$dev" info | grep 'Capabilities:' | cut -d: -f2); do
 			ht_cap="$(($ht_cap | $cap))"
@@ -587,18 +587,23 @@ detect_mac80211() {
 config wifi-device  radio$devidx
 	option type     mac80211
 	option channel  ${channel}
-	option hwmode	11${mode_11n}${mode_band}
+	option hwmode	11${mode_band}
 $dev_id
 $ht_capab
-	# REMOVE THIS LINE TO ENABLE WIFI:
-	option disabled 1
 
 config wifi-iface
 	option device   radio$devidx
 	option network  lan
 	option mode     ap
-	option ssid     OpenWrt
+	option ssid     ulm.freifunk.net
 	option encryption none
+
+config wifi-iface
+	option device	radio$devidx
+	option mode		adhoc
+	option ssid		batman.ulm.freifunk.net
+	option encryption	none
+	option bssid	CA:FF:EE:CA:FF:EE
 
 EOF
 	devidx=$(($devidx + 1))

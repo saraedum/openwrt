@@ -1,4 +1,12 @@
 # Put your custom commands here that should be executed once
 # the system init finished. By default this file does nothing.
 
+# for some reason tinc does not come up when booting
+ifconfig tinc up
+sleep 3
+
+# netifd does not seem to be able to handle tinc, so we configure batman manually
+batctl if add wlan0-1
+batctl if add tinc
+
 exit 0
