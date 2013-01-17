@@ -591,13 +591,6 @@ config wifi-device  radio$devidx
 $dev_id
 $ht_capab
 
-config wifi-iface
-	option device   radio$devidx
-	option network  lan
-	option mode     ap
-	option ssid     OpenWrt
-	option encryption none
-
 EOF
 	devidx=$(($devidx + 1))
 	done
