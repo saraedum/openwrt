@@ -539,6 +539,7 @@ check_mac80211_device() {
 
 detect_mac80211() {
 	devidx=0
+	hostname=`uname -n`
 	config_load wireless
 	while :; do
 		config_get type "radio$devidx" type
@@ -595,7 +596,7 @@ config wifi-iface
 	option device   radio$devidx
 	option network  lan
 	option mode     ap
-	option ssid     ulm.freifunk.net
+	option ssid     'ulm.freifunk.net ($hostname)'
 	option encryption none
 
 config wifi-iface
