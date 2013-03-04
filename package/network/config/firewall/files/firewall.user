@@ -4,3 +4,10 @@
 
 iptables-restore < /etc/firewall4.user
 ip6tables-restore < /etc/firewall6.user
+
+# No v4 traffic may go through batman
+ebtables -F
+ebtables -A INPUT -i bat0 -p ipv4 -j DROP
+ebtables -A OUTPUT -o bat0 -p ipv4 -j DROP
+ebtables -A FORWARD -i bat0 -p ipv4 -j DROP
+ebtables -A FORWARD -o bat0 -p ipv4 -j DROP
