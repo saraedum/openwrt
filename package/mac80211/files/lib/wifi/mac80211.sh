@@ -603,7 +603,6 @@ config wifi-device  radio$devidx
 	option channel  ${channel}
 	option hwmode	11${mode_band}
 $dev_id
-$ht_capab
 
 config wifi-iface
 	option device   radio$devidx
