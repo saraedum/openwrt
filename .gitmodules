@@ -4,3 +4,6 @@
 [submodule "git-feeds/openwrt"]
 	path = git-feeds/openwrt
 	url = git://github.com/ffulm/openwrt-packages.git
+[submodule "git-feeds/batman-adv"]
+	path = git-feeds/batman-adv
+	url = git://github.com/saraedum/batman-adv.git

@@ -8,8 +8,8 @@ How to build the firmware
 
 * `git clone` this repository
 * in the `openwrt` directory you cloned do a `git submodule update --init`
-* `./scripts/feeds/update`
-* `./scripts/feeds/install -a`
+* `./scripts/feeds update`
+* `./scripts/feeds install -a`
 * `make menuconfig` to set the `Target System` (usually `AR71xx/AR9xxx`) and the `Target Profile`; this sets sensible defaults for everything else
 * `make`
 * install the firmware, e.g., in `bin/ar71xx/`, following the guide for your box on the OpenWrt wiki
