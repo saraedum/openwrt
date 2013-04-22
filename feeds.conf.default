@@ -1,3 +1,4 @@
 src-link	 packages	 ../git-feeds/openwrt
 src-svn	 xwrt	 http://x-wrt.googlecode.com/svn/trunk/package
 src-link	 luci	 ../git-feeds/luci
+src-link	batman_adv	../git-feeds/batman-adv
