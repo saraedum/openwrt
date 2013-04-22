@@ -1,6 +1,6 @@
 --- a/drivers/rtc/Kconfig
 +++ b/drivers/rtc/Kconfig
-@@ -773,6 +773,15 @@ config RTC_DRV_NUC900
+@@ -781,6 +781,15 @@ config RTC_DRV_NUC900
  	  If you say yes here you get support for the RTC subsystem of the
  	  NUC910/NUC920 used in embedded systems.
  
@@ -185,7 +185,7 @@
 +	.set_time	= rtc7301_set_datetime,
 +};
 +
-+static int __devinit rtc7301_probe(struct platform_device *pdev)
++static int rtc7301_probe(struct platform_device *pdev)
 +{
 +	struct rtc_device *rtc;
 +	struct resource *res;
@@ -211,7 +211,7 @@
 +	return 0;
 +}
 +
-+static int __devexit rtc7301_remove(struct platform_device *pdev)
++static int rtc7301_remove(struct platform_device *pdev)
 +{
 +	struct rtc_device *rtc = platform_get_drvdata(pdev);
 +
@@ -228,7 +228,7 @@
 +		.owner	= THIS_MODULE,
 +	},
 +	.probe	= rtc7301_probe,
-+	.remove = __devexit_p(rtc7301_remove),
++	.remove = rtc7301_remove,
 +};
 +
 +static __init int rtc7301_init(void)
