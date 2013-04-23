@@ -59,7 +59,7 @@ endef
 define Package/base-files/config
 config PROCD_INIT
 	bool "Use procd as the init process"
-	default n
+	default y
 endef
 
 ifeq ($(CONFIG_PROCD_INIT),)
