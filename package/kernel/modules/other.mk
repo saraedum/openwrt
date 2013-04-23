@@ -146,6 +146,21 @@ endef
 
 $(eval $(call KernelPackage,gpio-nxp-74hc164))
 
+define KernelPackage/gpio-pcf857x
+  SUBMENU:=$(OTHER_MENU)
+  DEPENDS:=@GPIO_SUPPORT +kmod-i2c-core
+  TITLE:=PCX857x, PCA967x and MAX732X I2C GPIO expanders
+  KCONFIG:=CONFIG_GPIO_PCF857X
+  FILES:=$(LINUX_DIR)/drivers/gpio/gpio-pcf857x.ko
+  AUTOLOAD:=$(call AutoLoad,55,gpio-pcf857x)
+endef
+
+define KernelPackage/gpio-pcf857x/description
+  Kernel module for PCF857x, PCA{85,96}7x, and MAX732[89] I2C GPIO expanders
+endef
+
+$(eval $(call KernelPackage,gpio-pcf857x))
+
 define KernelPackage/lp
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Parallel port and line printer support
@@ -393,7 +408,7 @@ define KernelPackage/rtc-marvell
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Marvell SoC built-in RTC support
   $(call AddDepends/rtc)
-  DEPENDS+=@TARGET_kirkwood||TARGET_orion
+  DEPENDS+=@TARGET_kirkwood||TARGET_orion||TARGET_mvebu
   KCONFIG:=CONFIG_RTC_DRV_MV
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-mv.ko
   AUTOLOAD:=$(call AutoLoad,60,rtc-mv)
@@ -520,7 +535,7 @@ define KernelPackage/serial-8250
 	CONFIG_SERIAL_8250_SHARE_IRQ=y \
 	CONFIG_SERIAL_8250_DETECT_IRQ=n \
 	CONFIG_SERIAL_8250_RSA=n
-  FILES:=$(LINUX_DIR)/drivers/tty/serial/8250/8250.ko
+  FILES:=$(LINUX_DIR)/drivers/tty/serial/8250/8250$(if $(call kernel_patchver_ge,3.7),_core).ko
 endef
 
 define KernelPackage/serial-8250/description
@@ -542,7 +557,7 @@ define KernelPackage/regmap
 	$(LINUX_DIR)/drivers/base/regmap/regmap-core.ko \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-i2c.ko \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-spi.ko
-  AUTOLOAD:=$(call AutoLoad,10,regmap-core regmap-i2c regmap-spi)
+  AUTOLOAD:=$(call AutoLoad,21,regmap-core regmap-i2c regmap-spi)
 endef
 
 define KernelPackage/regmap/description
@@ -602,3 +617,54 @@ define KernelPacakge/mvsdio/description
 endef
 
 $(eval $(call KernelPackage,mvsdio))
+
+
+define KernelPackage/pps
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=PPS support
+  KCONFIG:=CONFIG_PPS
+  FILES:=$(LINUX_DIR)/drivers/pps/pps_core.ko
+  AUTOLOAD:=$(call AutoLoad,20,pps_core)
+endef
+
+define KernelPacakge/pps/description
+  PPS (Pulse Per Second) is a special pulse provided by some GPS
+  antennae. Userland can use it to get a high-precision time
+  reference.
+endef
+
+$(eval $(call KernelPackage,pps))
+
+
+define KernelPackage/ptp
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=PTP clock support
+  DEPENDS:=+kmod-pps
+  KCONFIG:=CONFIG_PTP_1588_CLOCK
+  FILES:=$(LINUX_DIR)/drivers/ptp/ptp.ko
+  AUTOLOAD:=$(call AutoLoad,25,ptp)
+endef
+
+define KernelPacakge/ptp/description
+  The IEEE 1588 standard defines a method to precisely
+  synchronize distributed clocks over Ethernet networks.
+endef
+
+$(eval $(call KernelPackage,ptp))
+
+
+define KernelPackage/ptp-gianfar
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Freescale Gianfar PTP support
+  DEPENDS:=@TARGET_mpc85xx +kmod-gianfar +kmod-ptp
+  KCONFIG:=CONFIG_PTP_1588_CLOCK_GIANFAR
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/freescale/gianfar_ptp.ko
+  AUTOLOAD:=$(call AutoLoad,51,gianfar_ptp)
+endef
+
+define KernelPacakge/ptp-gianfar/description
+  Kernel module for IEEE 1588 support for Freescale
+  Gianfar Ethernet drivers.
+endef
+
+$(eval $(call KernelPackage,ptp-gianfar))
