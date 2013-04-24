@@ -606,6 +606,7 @@ config wifi-device  radio$devidx
 	option type     mac80211
 	option channel  ${channel}
 	option hwmode	11${mode_band}
+	option noscan   1
 $dev_id
 
 config wifi-iface
