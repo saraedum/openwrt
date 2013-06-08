@@ -14,7 +14,7 @@ DEVICE_TYPE?=router
 # Default packages - the really basic set
 DEFAULT_PACKAGES:=base-files libc libgcc busybox dropbear mtd uci opkg hotplug2 netifd
 # For router targets
-DEFAULT_PACKAGES.router:=dnsmasq iptables kmod-ipt-nathelper kmod-batman-adv crda ip6tables iptables-mod-ipopt iptables-mod-nat-extra ip luci-app-splash radvd tinc   hostapd kmod-siit luci-mod-admin-core luci-sgi-uhttpd firewall kmod-ipt-conntrack-extra iptables-mod-conntrack-extra kmod-bridge kmod-ipt-extra iptables-mod-extra    ebtables kmod-ipt-tee iptables-mod-tee
+DEFAULT_PACKAGES.router:=dnsmasq iptables kmod-ipt-nathelper kmod-batman-adv-devel crda ip6tables iptables-mod-ipopt iptables-mod-nat-extra ip luci-app-splash radvd tinc hostapd kmod-siit luci-mod-admin-core luci-sgi-uhttpd firewall kmod-ipt-conntrack-extra iptables-mod-conntrack-extra kmod-bridge kmod-ipt-extra iptables-mod-extra ebtables kmod-ipt-tee iptables-mod-tee procd librt libpthread
 DEFAULT_PACKAGES.bootloader:=
 
 ifneq ($(DUMP),)

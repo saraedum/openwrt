@@ -1,6 +1,9 @@
 #!/bin/sh
 append DRIVERS "mac80211"
 
+. $IPKG_INSTROOT/lib/functions.sh
+. $IPKG_INSTROOT/lib/functions/ffulm.sh
+
 mac80211_hostapd_setup_base() {
 	local phy="$1"
 	local ifname="$2"
@@ -552,7 +555,8 @@ check_mac80211_device() {
 
 detect_mac80211() {
 	devidx=0
-	hostname=`uname -n`
+	ensure_ffulm_hostname
+	hostname=$(uci_get system @system[0] hostname)
 	config_load wireless
 	while :; do
 		config_get type "radio$devidx" type
@@ -602,6 +606,7 @@ config wifi-device  radio$devidx
 	option type     mac80211
 	option channel  ${channel}
 	option hwmode	11${mode_band}
+	option noscan   1
 $dev_id
 
 config wifi-iface
